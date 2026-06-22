@@ -1,0 +1,397 @@
+<!doctype html>
+<html lang="en" class="lenis">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ARMANI · A Website Agency for Luxury Brands</title>
+    <meta
+      name="description"
+      content="ARMANI is a website agency for luxury businesses. We design and engineer digital experiences for residences, horology, and yachts, built by AI powered agents and backed by 24/7 support."
+    />
+    <meta name="theme-color" content="#08080a" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2308080a'/%3E%3Ctext x='16' y='23' font-family='monospace' font-size='19' font-weight='600' fill='%23ead9b8' text-anchor='middle'%3EA%3C/text%3E%3C/svg%3E"
+    />
+
+    <link rel="preconnect" href="https://api.fontshare.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&f[]=satoshi@300,400,500,700&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap"
+    />
+
+    <!-- prime the first frames so the loader can paint before the module graph finishes -->
+    <link rel="preload" as="image" href="./frames/frame_0001.webp" type="image/webp" />
+    <link rel="preload" as="image" href="./frames/frame_0002.webp" type="image/webp" />
+    <script type="module" crossorigin src="./assets/index--HMd8e_z.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-432YlIig.css">
+  </head>
+  <body>
+    <!-- ============ LOADER ============ -->
+    <div id="loader" aria-hidden="true">
+      <div class="loader-inner">
+        <div class="loader-mark">ARMANI</div>
+        <div class="loader-track"><div class="loader-fill" id="loader-fill"></div></div>
+        <div class="loader-row">
+          <span>Composing the descent</span>
+          <span class="loader-pct" id="loader-pct">0%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ ATMOSPHERE + CURSOR ============ -->
+    <div class="grain" aria-hidden="true"></div>
+    <div class="cursor-ring desktop-only" id="cursor-ring" aria-hidden="true"></div>
+    <div class="cursor-dot desktop-only" id="cursor-dot" aria-hidden="true"></div>
+
+    <!-- ============ HERO CHROME ============ -->
+    <div class="hero-rail desktop-only" id="hero-rail" aria-hidden="true">
+      <div class="rail-fill" id="rail-fill"></div>
+      <div class="rail-node" id="rail-node"></div>
+      <div class="rail-label" id="rail-label">I · Sky</div>
+    </div>
+    <div class="scroll-hint desktop-only" id="scroll-hint" aria-hidden="true">
+      <span>Scroll</span>
+      <div class="scroll-track"><div class="scroll-bead"></div></div>
+    </div>
+
+    <main id="app">
+      <!-- ============ HERO ============ -->
+      <section id="hero" aria-label="A cinematic descent through the luxury worlds ARMANI builds for">
+        <canvas
+          id="hero-canvas"
+          role="img"
+          aria-label="A cinematic journey from the clouds through a luxury residence, a timepiece and its mechanics, out to a marina superyacht, and up with a private jet climbing back into the sky"
+        ></canvas>
+        <div class="hero-scrim"></div>
+        <div class="hero-overlays">
+          <!-- I ·clouds -->
+          <div class="hero-zone" id="zone-eyebrow">
+            <p class="eyebrow" data-split-letters>A Web Agency for Luxury Brands</p>
+          </div>
+
+          <!-- II ·the tower establishes -->
+          <div class="hero-zone" id="zone-name">
+            <h1 class="brand-reveal" id="brand-reveal">
+              <span class="brand-name">ARMANI</span>
+              <span class="brand-sub">Websites for Luxury Brands</span>
+            </h1>
+          </div>
+
+          <!-- III ·the residences we build for -->
+          <div class="chapter-zone" id="chapter-residences" aria-hidden="true">
+            <div class="chapter-card">
+              <span class="chapter-index">I · Residences</span>
+              <div class="chapter-word-mask"><span class="chapter-word">Residences</span></div>
+              <span class="chapter-rule"></span>
+              <p class="chapter-caption">Digital homes for the developments and estates that redefine a skyline.</p>
+            </div>
+          </div>
+
+          <!-- IV ·the maisons we build for -->
+          <div class="chapter-zone" id="chapter-horology" aria-hidden="true">
+            <div class="chapter-card">
+              <span class="chapter-index">II · Horology</span>
+              <div class="chapter-word-mask"><span class="chapter-word">Horology</span></div>
+              <span class="chapter-rule"></span>
+              <p class="chapter-caption">Online showcases worthy of the maisons that keep the world's finest time.</p>
+            </div>
+          </div>
+
+          <!-- V ·the yards we build for -->
+          <div class="chapter-zone" id="chapter-yachts" aria-hidden="true">
+            <div class="chapter-card">
+              <span class="chapter-index">III · Yachts</span>
+              <div class="chapter-word-mask"><span class="chapter-word">Yachts</span></div>
+              <span class="chapter-rule"></span>
+              <p class="chapter-caption">Flagship sites for the yards and brokerages behind the water's great vessels.</p>
+            </div>
+          </div>
+
+          <!-- VI · the jets we build for -->
+          <div class="chapter-zone" id="chapter-aviation" aria-hidden="true">
+            <div class="chapter-card">
+              <span class="chapter-index">IV · Aviation</span>
+              <div class="chapter-word-mask"><span class="chapter-word">Aviation</span></div>
+              <span class="chapter-rule"></span>
+              <p class="chapter-caption">Online flagships for the charters and brokers who move the world by private jet.</p>
+            </div>
+          </div>
+
+          <!-- VII · the unifying line, over the climb into the sky -->
+          <div class="hero-zone" id="zone-closing">
+            <p class="closing-line">One studio. <em>Every expression of luxury, online.</em></p>
+          </div>
+        </div>
+        <div class="mobile-scroll-cue mobile-only" aria-hidden="true">Scroll to explore</div>
+      </section>
+
+      <!-- ============ WHO WE ARE ============ -->
+      <section class="section" id="whoweare">
+        <div class="glow desktop-only" style="width:560px;height:560px;background:rgba(234,217,184,0.13);top:-140px;left:-140px"></div>
+        <div class="wrap">
+          <div class="who-grid">
+            <div class="who-head" data-reveal="fade">
+              <span class="section-index">[ 01 · The Studio ]</span>
+              <span class="hairline" data-hairline></span>
+            </div>
+
+            <div class="who-title">
+              <h2 class="h-mega" data-reveal="words">Who We Are</h2>
+            </div>
+
+            <div class="who-copy">
+              <p class="lead" data-reveal="lines">
+                <span class="reveal-line"><span>We are a website agency</span></span>
+                <span class="reveal-line"><span>built for luxury businesses,</span></span>
+                <span class="reveal-line"><span>where hand craft meets</span></span>
+                <span class="reveal-line"><span>machine intelligence.</span></span>
+              </p>
+              <p class="body-dim mt-8" data-reveal="fade">
+                ARMANI designs and engineers the digital homes of the world's most exacting
+                brands. Every site we build runs on AI powered agents, and stands on
+                24/7 support that never sleeps. One team carries the work from first sketch to
+                launch, and long after.
+              </p>
+            </div>
+
+            <!-- stats -->
+            <div class="who-stats">
+              <div class="hairline mb-14" data-hairline></div>
+              <div class="stat-row">
+                <div data-reveal="fade">
+                  <div class="stat-value">24/7</div>
+                  <div class="stat-label">Support, always on</div>
+                </div>
+                <div data-reveal="fade">
+                  <div class="stat-value"><span data-count="200" data-suffix="+">0</span></div>
+                  <div class="stat-label">Luxury sites shipped</div>
+                </div>
+                <div data-reveal="fade">
+                  <div class="stat-value"><span data-count="40" data-suffix="+">0</span></div>
+                  <div class="stat-label">AI powered agents in production</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ WHO WE SERVE ============ -->
+      <section class="section" id="whoweserve">
+        <div class="wrap">
+          <div class="house-head">
+            <div>
+              <div class="mb-6" data-reveal="fade"><span class="section-index">[ 02 · Who We Serve ]</span></div>
+              <h2 class="h-mega" data-reveal="words">Who We Serve</h2>
+            </div>
+            <p class="body-dim house-head-note" data-reveal="fade">
+              Whoever we build for, two things never change. AI powered agents run
+              quietly behind the craft, and 24/7 support stands behind every launch.
+            </p>
+          </div>
+
+          <div class="house-grid" id="serve-grid">
+            <article class="house-card" data-reveal="rise" data-magnetic-soft>
+              <div class="house-num">01</div>
+              <h3 class="house-title">Residences</h3>
+              <p class="house-desc">
+                Developers and architects behind the towers and estates that redefine an address. We
+                give them a digital home as considered as the building itself.
+              </p>
+              <span class="house-arrow">See the work</span>
+            </article>
+            <article class="house-card" data-reveal="rise" data-magnetic-soft>
+              <div class="house-num">02</div>
+              <h3 class="house-title">Horology</h3>
+              <p class="house-desc">
+                Maisons and independents whose movements keep the finest time. We craft the online
+                showcase their calibres deserve.
+              </p>
+              <span class="house-arrow">See the work</span>
+            </article>
+            <article class="house-card" data-reveal="rise" data-magnetic-soft>
+              <div class="house-num">03</div>
+              <h3 class="house-title">Yachts</h3>
+              <p class="house-desc">
+                Yards, brokerages, and charter houses on the water. We build the flagship that sells
+                the vessel before the viewing.
+              </p>
+              <span class="house-arrow">See the work</span>
+            </article>
+            <article class="house-card" data-reveal="rise" data-magnetic-soft>
+              <div class="house-num">04</div>
+              <h3 class="house-title">Aviation</h3>
+              <p class="house-desc">
+                Charter fleets, brokers, and jet maisons who move clients between the worlds above. We
+                build the booking experience that matches the cabin.
+              </p>
+              <span class="house-arrow">See the work</span>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ HOW WE WORK ============ -->
+      <section class="section" id="approach">
+        <div class="glow desktop-only" style="width:520px;height:520px;background:rgba(234,217,184,0.10);bottom:-140px;left:-140px"></div>
+        <div class="wrap">
+          <div class="house-head">
+            <div>
+              <div class="mb-6" data-reveal="fade"><span class="section-index">[ 03 · How We Work ]</span></div>
+              <h2 class="h-mega" data-reveal="words">How We Work</h2>
+            </div>
+            <p class="body-dim house-head-note" data-reveal="fade">
+              The craft you can see rests on an engine you cannot. This is what stands behind every
+              site we ship.
+            </p>
+          </div>
+
+          <div class="house-grid" id="approach-grid">
+            <article class="house-card" data-reveal="rise" data-magnetic-soft>
+              <div class="house-num">01</div>
+              <h3 class="house-title">AI Powered Agents</h3>
+              <p class="house-desc">
+                An AI powered build that turns content, imagery, and data into experiences
+                that personalize, adapt, and stay fast at any scale.
+              </p>
+              <span class="house-arrow">The engine</span>
+            </article>
+            <article class="house-card" data-reveal="rise" data-magnetic-soft>
+              <div class="house-num">02</div>
+              <h3 class="house-title">Support, 24/7</h3>
+              <p class="house-desc">
+                A team on call every hour of every day. Your flagship is watched, tuned, and
+                protected while the rest of the world sleeps.
+              </p>
+              <span class="house-arrow">Always on</span>
+            </article>
+            <article class="house-card" data-reveal="rise" data-magnetic-soft>
+              <div class="house-num">03</div>
+              <h3 class="house-title">Team You Can Trust</h3>
+              <p class="house-desc">
+                The people who design your site are the people who build it and maintain it.
+                No outsourced black box.
+              </p>
+              <span class="house-arrow">In-house</span>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ REVIEWS ============ -->
+      <section class="section" id="reviews">
+        <div class="glow desktop-only" style="width:640px;height:640px;background:rgba(253,248,238,0.08);bottom:-180px;right:-180px"></div>
+        <div class="wrap">
+          <div class="reviews-head">
+            <div class="kicker mb-6" data-reveal="fade">From Our Clients</div>
+            <h2 class="h-mega" data-reveal="words">A reputation built on trust.</h2>
+          </div>
+        </div>
+
+        <div class="marquee-mask marquee-row mb-6" data-reveal="fade">
+          <div class="marquee" id="marquee-a"></div>
+        </div>
+        <div class="marquee-mask marquee-row" data-reveal="fade">
+          <div class="marquee" id="marquee-b"></div>
+        </div>
+      </section>
+
+      <!-- ============ CONSULTATION ============ -->
+      <section class="section" id="consultation">
+        <div class="glow desktop-only" style="width:520px;height:520px;background:rgba(234,217,184,0.10);top:-120px;right:-160px"></div>
+        <div class="wrap">
+          <div class="who-grid">
+            <div class="who-head" data-reveal="fade">
+              <span class="section-index">[ 04 · Consultation ]</span>
+              <span class="hairline" data-hairline></span>
+            </div>
+
+            <div class="who-title">
+              <h2 class="h-mega" data-reveal="words">Begin With a Conversation</h2>
+            </div>
+
+            <div class="who-copy">
+              <p class="body-dim" data-reveal="fade">
+                A private, thirty-minute consultation with the studio. Bring your brand and
+                your ambitions — we will talk through what its digital home could be, and
+                how we would build it. No deck, no obligation.
+              </p>
+              <a
+                class="consult-cta"
+                data-reveal="fade"
+                data-magnetic-soft
+                href="https://calendly.com/shaurya-sharma-yale/30min"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Schedule an Appointment <span aria-hidden>→</span>
+              </a>
+              <p class="consult-meta" data-reveal="fade">30 min · Video call · Complimentary</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ ELEGANT FINALE ============ -->
+      <section id="finale" aria-label="In closing">
+        <div class="finale-aurora" aria-hidden="true"></div>
+        <div class="finale-inner">
+          <span class="finale-eyebrow">An Invitation</span>
+          <div class="finale-wordmark-wrap">
+            <div class="finale-wordmark">ARMANI</div>
+          </div>
+          <p class="finale-tagline">
+            <span class="reveal-line"><span>Let us build the digital home</span></span>
+            <span class="reveal-line"><span>your brand deserves.</span></span>
+          </p>
+          <a
+            href="https://calendly.com/shaurya-sharma-yale/30min"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="finale-cta"
+            data-magnetic
+          >
+            <span class="finale-cta-label">Make an enquiry</span>
+            <span class="finale-cta-line"></span>
+          </a>
+        </div>
+      </section>
+
+      <!-- ============ MINIMAL FOOTER ============ -->
+      <footer id="footer">
+        <div class="wrap">
+          <div class="hairline footer-divider" data-hairline></div>
+          <div class="footer-row">
+            <a class="footer-brand" href="#" data-magnetic-soft>ARMANI</a>
+            <div class="footer-nav">
+              <nav class="footer-links">
+                <a class="foot-link" href="#whoweare" data-magnetic-soft>The Studio</a>
+                <a class="foot-link" href="#whoweserve" data-magnetic-soft>Who We Serve</a>
+                <a class="foot-link" href="#approach" data-magnetic-soft>How We Work</a>
+                <a class="foot-link" href="#reviews" data-magnetic-soft>Clients</a>
+                <a class="foot-link" href="#consultation" data-magnetic-soft>Consultation</a>
+              </nav>
+              <div class="footer-social">
+                <a class="foot-link" href="#" data-magnetic-soft>Instagram</a>
+                <a class="foot-link" href="#" data-magnetic-soft>LinkedIn</a>
+                <a class="foot-link" href="#" data-magnetic-soft>Dribbble</a>
+              </div>
+            </div>
+          </div>
+          <div class="footer-fine">
+            <span>© 2026 ARMANI. All rights reserved.</span>
+            <span>Websites for Luxury Brands</span>
+          </div>
+        </div>
+      </footer>
+    </main>
+
+  </body>
+</html>
