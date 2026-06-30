@@ -2584,25 +2584,41 @@
       if (window.activePlayer) {
         window.activePlayer.clearCache();
         try {
-          // Preload the active theme's frames (automatically resolves dynamically inside the player)
-          await window.activePlayer.preloadAll((loaded, total) => {
-            const pct = Math.round((loaded / total) * 100);
-            if (loaderPct) loaderPct.textContent = `${pct}%`;
-            if (loaderFill) loaderFill.style.right = `${100 - pct}%`;
-          }, 90);
-          
-          // Draw current frame immediately matching scroll progress
+          // Get current frame index matching scroll progress
           if (!heroTrigger && window.ScrollTrigger) {
             const heroEl = document.getElementById('hero');
             heroTrigger = window.ScrollTrigger.getAll().find(t => t.trigger === heroEl);
           }
-          if (heroTrigger) {
-            const frameIndex = Math.round(heroTrigger.progress * (window.activeConfig.frameCount - 1));
-            window.activePlayer.draw(frameIndex);
-          } else if (typeof window.activePlayer.getCurrentFrame === 'function') {
-            const currentFrame = window.activePlayer.getCurrentFrame();
-            window.activePlayer.drawAt(currentFrame);
+          const currentFrame = heroTrigger 
+            ? Math.round(heroTrigger.progress * (window.activeConfig.frameCount - 1))
+            : (typeof window.activePlayer.getCurrentFrame === 'function' ? window.activePlayer.getCurrentFrame() : 0);
+          
+          const targetFrame = Math.max(0, Math.min(window.activeConfig.frameCount - 1, currentFrame));
+          
+          // Preload the current frame immediately
+          await window.activePlayer.preloadOne(targetFrame);
+          
+          // Preload surrounding frames for buffer
+          const sidePromises = [];
+          for (let offset = 1; offset <= 3; offset++) {
+            if (targetFrame + offset < window.activeConfig.frameCount) {
+              sidePromises.push(window.activePlayer.preloadOne(targetFrame + offset));
+            }
+            if (targetFrame - offset >= 0) {
+              sidePromises.push(window.activePlayer.preloadOne(targetFrame - offset));
+            }
           }
+          await Promise.all(sidePromises);
+          
+          // Draw correct frame immediately
+          window.activePlayer.draw(targetFrame);
+          
+          // Preload the rest in the background
+          window.activePlayer.preloadAll((loaded, total) => {
+            const pct = Math.round((loaded / total) * 100);
+            if (loaderPct) loaderPct.textContent = `${pct}%`;
+            if (loaderFill) loaderFill.style.right = `${100 - pct}%`;
+          }, 90);
           
           if (window.ScrollTrigger) {
             window.ScrollTrigger.update();
