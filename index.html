@@ -2420,8 +2420,8 @@
       if (!window.activeConfig || !window.Bc || !window.ds) return;
       
       const isMobile = !window.matchMedia("(min-width: 1024px)").matches;
-      const totalFrames = window.activeConfig.frameCount;
       const isNight = window.currentTheme === 'night';
+      const totalFrames = isNight ? (isMobile ? 456 : 760) : window.activeConfig.frameCount;
       
       let newBc, newDs;
       if (isNight) {
@@ -2539,7 +2539,8 @@
       // Use actual video duration or fallback to re-encoded duration
       const duration = video.duration || 14.83; 
       const pinPxPerFrame = 6;
-      const totalFrames = 760; // Scrub length matches day frame count
+      const isMobile = !window.matchMedia("(min-width: 1024px)").matches;
+      const totalFrames = isMobile ? 456 : 760;
       const scrollLength = totalFrames * pinPxPerFrame;
 
       const eyebrowLetters = Array.from(document.querySelectorAll("#zone-eyebrow .eyebrow span"));
