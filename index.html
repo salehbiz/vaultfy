@@ -2660,15 +2660,48 @@
           `./assets/vault-frames/frame_${String(index + 1).padStart(4, '0')}.webp`
         );
 
-        const images = [];
         const air = {
           frame: 0
         };
 
-        // Preload first frame and set canvas dimensions on resize
-        const img = new Image();
-        img.src = currentFrame(0);
-        img.onload = () => {
+        // Optimized Cache System for Services Canvas (Sliding Window of 24 frames max)
+        const serviceImageCache = new Map();
+        const maxServiceCacheSize = 24;
+
+        function getServiceImage(index) {
+          if (serviceImageCache.has(index)) {
+            return serviceImageCache.get(index);
+          }
+          const img = new Image();
+          img.src = currentFrame(index);
+          
+          if (serviceImageCache.size >= maxServiceCacheSize) {
+            const oldestKey = serviceImageCache.keys().next().value;
+            serviceImageCache.delete(oldestKey);
+          }
+          serviceImageCache.set(index, img);
+          return img;
+        }
+
+        // Sequential background pre-downloading to browser HTTP cache (keeps memory clear)
+        function prefetchServices() {
+          let i = 0;
+          function next() {
+            if (i >= frameCount) return;
+            const img = new Image();
+            img.src = currentFrame(i);
+            img.onload = img.onerror = () => {
+              i++;
+              setTimeout(next, 15);
+            };
+          }
+          setTimeout(next, 2500);
+        }
+        prefetchServices();
+
+        // Load first frame
+        const firstImg = getServiceImage(0);
+        firstImg.onload = () => {
           render();
         };
 
@@ -2680,18 +2713,22 @@
         window.addEventListener('resize', resizeCanvas);
         resizeCanvas();
 
-        // Preload remaining frames
-        for (let i = 0; i < frameCount; i++) {
-          const img = new Image();
-          img.src = currentFrame(i);
-          images.push(img);
+        function render() {
+          const activeImg = getServiceImage(air.frame);
+          if (!activeImg) return;
+
+          if (!activeImg.complete) {
+            activeImg.onload = () => {
+              if (getServiceImage(air.frame) === activeImg) {
+                draw(activeImg);
+              }
+            };
+            return;
+          }
+          draw(activeImg);
         }
 
-        function render() {
-          const activeImg = images[air.frame] || images[0];
-          if (!activeImg || !activeImg.complete) return;
-
-          // Draw image scaling to cover the canvas (like object-fit: cover)
+        function draw(activeImg) {
           const canvasRatio = canvas.width / canvas.height;
           const imgRatio = activeImg.width / activeImg.height;
 
