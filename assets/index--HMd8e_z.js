@@ -7584,12 +7584,16 @@ I.core = {
   },
 };
 cl() && z.registerPlugin(I);
-const vc = 800,
-  yc = 480,
+const vc = 192,
+  yc = 192,
   wc = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
   xc = () => window.matchMedia("(min-width: 1024px)").matches,
   bc = () => window.matchMedia("(pointer: fine)").matches,
-  Sc = (s) => String(s).padStart(4, "0");
+  Sc = (s) => String(s).padStart(4, "0"),
+  vfSlowNet = () => {
+    const cc = navigator.connection || navigator.webkitConnection;
+    return !!(cc && (cc.saveData || /(^|-)2g$/.test(cc.effectiveType || "")));
+  };
 var Ko = "1.3.23";
 function Sl(s, t, i) {
   return Math.max(s, Math.min(t, i));
@@ -8633,8 +8637,9 @@ function Pl(s, t = {}) {
     n = t.windowAhead ?? 48,
     o = t.windowBehind ?? 16,
     a = t.windowEvict ?? 64,
+    maxDecoded = t.maxDecoded ?? 25,
     l = (E) =>
-      `./${window.currentTheme === "night" ? (i === "frames-mobile" ? "frames-mobile-night" : "frames-night") : i}/frame_${Sc(E + 1)}.webp`,
+      `./${window.currentTheme === "night" ? (i === "assets/hero-frames-mobile" ? "assets/hero-frames-mobile-night" : "assets/hero-frames-night") : i}/frame_${Sc(E + 1)}.webp`,
     u = document.getElementById("hero-canvas");
   if (!u) throw new Error("#hero-canvas not found");
   const c = u.getContext("2d", { alpha: !1, desynchronized: !0 });
@@ -8644,6 +8649,37 @@ function Pl(s, t = {}) {
     f = new Map(),
     _ = new Set();
   let p = -1;
+  // Resolution-capped decoding: decode each frame no larger than the canvas
+  // actually needs (cover fit). On mobile/iOS this cuts decode time and the
+  // memory each ImageBitmap holds. Native size is learned from the first full
+  // decode; falls back to a plain decode if resize options are unsupported.
+  let nativeW = 0,
+    nativeH = 0,
+    canResize = typeof createImageBitmap === "function";
+  function decodeTarget() {
+    if (!nativeW || !nativeH) return null;
+    const scale = Math.min(1, Math.max(u.width / nativeW, u.height / nativeH));
+    return scale >= 0.999
+      ? null
+      : { w: Math.round(nativeW * scale), h: Math.round(nativeH * scale) };
+  }
+  async function decodeBlob(blob) {
+    const tgt = canResize ? decodeTarget() : null;
+    if (tgt) {
+      try {
+        return await createImageBitmap(blob, {
+          resizeWidth: tgt.w,
+          resizeHeight: tgt.h,
+          resizeQuality: "high",
+        });
+      } catch {
+        canResize = !1;
+      }
+    }
+    const bmp = await createImageBitmap(blob);
+    if (!nativeW) ((nativeW = bmp.width), (nativeH = bmp.height));
+    return bmp;
+  }
   function m() {
     const E = Math.min(window.devicePixelRatio || 1, r),
       M = u.clientWidth || window.innerWidth,
@@ -8694,13 +8730,13 @@ function Pl(s, t = {}) {
     const M = h[E];
     if (M) {
       try {
-        const N = await createImageBitmap(M);
+        const N = await decodeBlob(M);
         if (p !== -1 && Math.abs(E - p) > Math.max(48, 3 * a)) {
           N.close();
         } else {
           if (f.has(E)) {
             f.delete(E);
-          } else if (f.size >= 25) {
+          } else if (f.size >= maxDecoded) {
             const oldestKey = f.keys().next().value;
             const oldestImg = f.get(oldestKey);
             if (oldestImg && typeof oldestImg.close === "function") {
@@ -8795,22 +8831,34 @@ function Pl(s, t = {}) {
   };
   async function Q(E, M = s) {
     const N = s;
-    await A(0);
-    await v(0);
-    E(1, 1);
-    const preloadNextFrames = async () => {
-      const preloadCount = Math.min(8, N - 1);
-      const promises = [];
-      for (let idx = 1; idx <= preloadCount; idx++) {
-        promises.push(v(idx));
+    // Loader gate: how many frames to buffer before the hero is revealed.
+    const gate = Math.max(1, Math.min(M || 48, N));
+    let fetched = 0,
+      cursor = 0;
+    // Prefetch EVERY frame's blob up front with bounded concurrency. On a CDN
+    // the network transfer then happens once, here, instead of on-demand during
+    // scroll. Decoding stays windowed (see k/v), so resident memory is bounded
+    // while scrubbing reads decoded frames from memory — buttery on deploy.
+    const fetchWorker = async () => {
+      while (cursor < N) {
+        const idx = cursor++;
+        await A(idx);
+        fetched++;
+        if (fetched <= gate) E(Math.min(fetched, gate), gate);
       }
-      await Promise.all(promises);
     };
-    if (document.readyState === "complete") {
-      preloadNextFrames();
-    } else {
-      window.addEventListener("load", preloadNextFrames, { once: true });
-    }
+    const CONC = 8;
+    Promise.all(Array.from({ length: CONC }, fetchWorker)).catch(() => {});
+    // Resolve once the lead-in buffer is fetched, then decode the opening
+    // window so the very first scrub is smooth; the rest keeps downloading.
+    await new Promise((resolve) => {
+      const tick = () => (fetched >= gate ? resolve() : setTimeout(tick, 30));
+      tick();
+    });
+    E(gate, gate);
+    await v(0);
+    const lead = Math.min(n, N - 1);
+    await Promise.all(Array.from({ length: lead }, (q, idx) => v(idx)));
   }
   return (
     m(),
@@ -9166,24 +9214,26 @@ function Ol({ reduced: s, marqueeLoops: t }) {
       .to(a, { opacity: 1, y: 0, duration: 1.6 }, 2.2));
 }
 L.registerPlugin(I);
-const $c = 6,
+const $c = 20,
   Gc = 90,
   Kc = {
     frameCount: vc,
-    basePath: "frames",
+    basePath: "assets/hero-frames",
     stream: !0,
-    windowAhead: 8,
-    windowBehind: 4,
-    windowEvict: 12,
+    windowAhead: 24,
+    windowBehind: 12,
+    windowEvict: 48,
+    maxDecoded: 40,
   },
   Qc = {
     frameCount: yc,
-    basePath: "frames-mobile",
+    basePath: "assets/hero-frames-mobile",
     stream: !0,
-    dprCap: 3,
-    windowAhead: 6,
-    windowBehind: 3,
-    windowEvict: 10,
+    dprCap: 2,
+    windowAhead: 16,
+    windowBehind: 8,
+    windowEvict: 32,
+    maxDecoded: 28,
   },
   ps = document.getElementById("loader"),
   ta = document.getElementById("loader-fill"),
@@ -9270,7 +9320,7 @@ async function Jc() {
   I.config({ ignoreMobileResize: !0 });
   const s = !xc(),
     t = s ? Qc : Kc;
-  (wc()
+  (wc() || vfSlowNet()
     ? (Ml(1), await Zc(t))
     : await jc(t, { cursor: !s && bc(), smooth: !s }),
     window.addEventListener("load", () => I.refresh()));

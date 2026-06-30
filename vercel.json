@@ -1,7 +1,7 @@
 {
   "headers": [
     {
-      "source": "/(frames|frames-mobile|frames-night|frames-mobile-night|assets)/(.*)",
+      "source": "/assets/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
