@@ -2420,8 +2420,8 @@
       if (!window.activeConfig || !window.Bc || !window.ds) return;
       
       const isMobile = !window.matchMedia("(min-width: 1024px)").matches;
+      const totalFrames = window.activeConfig.frameCount;
       const isNight = window.currentTheme === 'night';
-      const totalFrames = isNight ? (isMobile ? 456 : 760) : window.activeConfig.frameCount;
       
       let newBc, newDs;
       if (isNight) {
@@ -2492,7 +2492,7 @@
       newDs.forEach(item => window.ds.push(item));
       
       // Rebuild timeline!
-      if (window.heroTimeline) {
+      if (window.heroTimeline && typeof window.Hc === 'function') {
         // Kill the old trigger & timeline
         if (window.heroTimeline.scrollTrigger) {
           window.heroTimeline.scrollTrigger.kill(true);
@@ -2500,12 +2500,8 @@
         window.heroTimeline.kill();
         
         // Re-create the timeline
-        if (window.currentTheme === 'night') {
-          initVideoScrollTrigger();
-        } else if (typeof window.Hc === 'function') {
-          const eyebrowLetters = Array.from(document.querySelectorAll("#zone-eyebrow .eyebrow span"));
-          window.Hc(window.activePlayer, { pinPxPerFrame: 6, eyebrowLetters: eyebrowLetters });
-        }
+        const eyebrowLetters = Array.from(document.querySelectorAll("#zone-eyebrow .eyebrow span"));
+        window.Hc(window.activePlayer, { pinPxPerFrame: 6, eyebrowLetters: eyebrowLetters });
 
         // Re-initialize services animation on the new timeline!
         if (typeof window.initServicesAnimation === 'function') {
@@ -2514,108 +2510,6 @@
       }
     };
 
-    let videoTrigger = null;
-    let videoRAF = null;
-
-    function initVideoScrollTrigger() {
-      const video = document.getElementById('hero-video-night');
-      const heroSection = document.getElementById('hero');
-      if (!video || !heroSection) return;
-
-      // Kill any previous video trigger/animation frame
-      if (videoTrigger) {
-        videoTrigger.kill(true);
-        videoTrigger = null;
-      }
-      if (videoRAF) {
-        cancelAnimationFrame(videoRAF);
-        videoRAF = null;
-      }
-
-      const gsap = window.gsap;
-      const ScrollTrigger = window.ScrollTrigger;
-      if (!gsap || !ScrollTrigger) return;
-
-      // Use actual video duration or fallback to re-encoded duration
-      const duration = video.duration || 14.83; 
-      const pinPxPerFrame = 6;
-      const isMobile = !window.matchMedia("(min-width: 1024px)").matches;
-      const totalFrames = isMobile ? 456 : 760;
-      const scrollLength = totalFrames * pinPxPerFrame;
-
-      const eyebrowLetters = Array.from(document.querySelectorAll("#zone-eyebrow .eyebrow span"));
-      const brandReveal = document.getElementById('brand-reveal');
-      const brandSub = document.querySelector('.brand-sub');
-      const closingZone = document.getElementById('zone-closing');
-      const eyebrowZone = document.getElementById('zone-eyebrow');
-      const nameZone = document.getElementById('zone-name');
-
-      gsap.set(eyebrowLetters, { yPercent: 120, opacity: 0 });
-      gsap.set(brandSub, { opacity: 0, y: 16 });
-      gsap.set(closingZone, { opacity: 0, y: 30 });
-
-      const videoProxy = { time: 0 };
-
-      // Initialize the ScrollTrigger timeline for video scrubbing
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: heroSection,
-          start: "top top",
-          end: `+=${scrollLength}`,
-          pin: true,
-          scrub: 0.5, // Smooth seek lag
-          anticipatePin: 1,
-          invalidateOnRefresh: true,
-          onUpdate: self => {
-            const progress = self.progress;
-            
-            // Update rail elements
-            const railFill = document.getElementById('rail-fill');
-            const railNode = document.getElementById('rail-node');
-            const railLabel = document.getElementById('rail-label');
-            
-            if (railFill) railFill.style.height = `${progress * 100}%`;
-            if (railNode) railNode.style.top = `${progress * 100}%`;
-            if (railLabel) railLabel.textContent = window.Xc ? window.Xc(progress) : "";
-            
-            // Throttled frame scrubbing write
-            if (videoRAF) cancelAnimationFrame(videoRAF);
-            videoRAF = requestAnimationFrame(() => {
-              video.currentTime = videoProxy.time;
-            });
-          }
-        }
-      });
-
-      videoTrigger = tl.scrollTrigger;
-
-      // Animate currentTime proxy
-      tl.to(videoProxy, {
-        time: duration,
-        ease: "none",
-        duration: 1
-      }, 0);
-
-      // Overlays reveal
-      tl.to(eyebrowZone, { opacity: 1, duration: 0.002 }, 0.001)
-        .to(eyebrowLetters, { yPercent: 0, opacity: 1, stagger: 0.0005, duration: 0.003, ease: "power2.out" }, 0.003)
-        .to(eyebrowLetters, { yPercent: -120, opacity: 0, stagger: 0.0005, duration: 0.003, ease: "power2.in" }, 0.007)
-        .to(eyebrowZone, { opacity: 0, duration: 0.002 }, 0.010);
-
-      tl.to(nameZone, { opacity: 1, duration: 0.01 }, 0.0125)
-        .fromTo(brandReveal, { clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0% 0 0)", duration: 0.03, ease: "power3.inOut" }, 0.02)
-        .to(brandSub, { opacity: 1, y: 0, duration: 0.02, ease: "power2.out" }, 0.05)
-        .to(nameZone, { opacity: 0, duration: 0.015 }, 0.08);
-
-      if (typeof window.Wc === 'function') {
-        window.Bc.forEach(chapter => window.Wc(tl, chapter));
-      }
-
-      tl.to(closingZone, { opacity: 1, y: 0, duration: 0.05, ease: "power2.out" }, 0.95);
-      
-      window.heroTimeline = tl;
-    }
-    
     // Check when hero timeline is loaded to sync initial theme configs
     document.addEventListener('DOMContentLoaded', () => {
       const checkInit = setInterval(() => {
@@ -2694,100 +2588,50 @@
       const canvas = document.getElementById('hero-canvas');
       const video = document.getElementById('hero-video-night');
       
-      if (newTheme === 'night') {
-        // --- NIGHT THEME (VIDEO BASED) ---
-        if (canvas) canvas.style.display = 'none';
-        if (video) {
-          video.style.display = 'block';
-          
-          // Select correct resolution based on media query
-          const isMobile = !window.matchMedia("(min-width: 1024px)").matches;
-          const targetSrc = isMobile ? "./assets/night_final_optimized_720p.mp4" : "./assets/night_final_optimized.mp4";
-          
-          // Set preload attribute
-          video.setAttribute('preload', 'auto');
-          
-          // Only update src if it changed
-          if (video.getAttribute('src') !== targetSrc) {
-            video.src = targetSrc;
-            video.load();
-          }
-
-          // Gating logic: HAVE_FUTURE_DATA is readyState >= 3
-          let isLoaded = false;
-          const handleVideoReady = () => {
-            if (isLoaded) return;
-            isLoaded = true;
-            
-            // Clean up event listeners
-            video.removeEventListener('canplay', handleVideoReady);
-            video.removeEventListener('canplaythrough', handleVideoReady);
-            
-            // Initialize the ScrollTrigger for video scrubbing
-            window.updateHeroRanges(); 
-            fadeLoader();
-          };
-
-          // Check if video is already ready
-          if (video.readyState >= 3) {
-            handleVideoReady();
-          } else {
-            video.addEventListener('canplay', handleVideoReady);
-            video.addEventListener('canplaythrough', handleVideoReady);
-            
-            // Cap loading time to 1.5 seconds maximum
-            setTimeout(() => {
-              if (!isLoaded) {
-                console.warn("Video load timeout. Forcing page entry.");
-                handleVideoReady();
-              }
-            }, 1500);
-          }
-        } else {
-          fadeLoader();
-        }
-      } else {
-        // --- DAY THEME (CANVAS BASED) ---
-        if (video) {
-          video.style.display = 'none';
-          video.pause();
-        }
-        if (canvas) canvas.style.display = 'block';
-        
-        if (window.activePlayer) {
-          window.activePlayer.clearCache();
-          try {
-            await window.activePlayer.preloadAll((loaded, total) => {
-              const pct = Math.round((loaded / total) * 100);
-              if (loaderPct) loaderPct.textContent = `${pct}%`;
-              if (loaderFill) loaderFill.style.right = `${100 - pct}%`;
-            }, 90);
-            
-            if (!heroTrigger && window.ScrollTrigger) {
-              const heroEl = document.getElementById('hero');
-              heroTrigger = window.ScrollTrigger.getAll().find(t => t.trigger === heroEl);
-            }
-            if (heroTrigger) {
-              const frameIndex = Math.round(heroTrigger.progress * (window.activeConfig.frameCount - 1));
-              window.activePlayer.draw(frameIndex);
-            } else if (typeof window.activePlayer.getCurrentFrame === 'function') {
-              const currentFrame = window.activePlayer.getCurrentFrame();
-              window.activePlayer.drawAt(currentFrame);
-            }
-            
-            if (window.ScrollTrigger) {
-              window.ScrollTrigger.update();
-            }
-            
-            if (typeof window.updateHeroRanges === 'function') {
-              window.updateHeroRanges();
-            }
-          } catch (e) {
-            console.error("Failed to preload theme frames:", e);
-          }
-        }
-        fadeLoader();
+      if (video) {
+        video.style.display = 'none';
+        video.pause();
       }
+      if (canvas) {
+        canvas.style.display = 'block';
+      }
+      
+      if (window.activePlayer) {
+        window.activePlayer.clearCache();
+        try {
+          // Preload the active theme's frames (automatically resolves dynamically inside the player)
+          await window.activePlayer.preloadAll((loaded, total) => {
+            const pct = Math.round((loaded / total) * 100);
+            if (loaderPct) loaderPct.textContent = `${pct}%`;
+            if (loaderFill) loaderFill.style.right = `${100 - pct}%`;
+          }, 90);
+          
+          // Draw current frame immediately matching scroll progress
+          if (!heroTrigger && window.ScrollTrigger) {
+            const heroEl = document.getElementById('hero');
+            heroTrigger = window.ScrollTrigger.getAll().find(t => t.trigger === heroEl);
+          }
+          if (heroTrigger) {
+            const frameIndex = Math.round(heroTrigger.progress * (window.activeConfig.frameCount - 1));
+            window.activePlayer.draw(frameIndex);
+          } else if (typeof window.activePlayer.getCurrentFrame === 'function') {
+            const currentFrame = window.activePlayer.getCurrentFrame();
+            window.activePlayer.drawAt(currentFrame);
+          }
+          
+          if (window.ScrollTrigger) {
+            window.ScrollTrigger.update();
+          }
+          
+          // Rebuild the timeline using current theme ranges
+          if (typeof window.updateHeroRanges === 'function') {
+            window.updateHeroRanges();
+          }
+        } catch (e) {
+          console.error("Failed to preload theme frames:", e);
+        }
+      }
+      fadeLoader();
     }
 
     // Debounced window resize event listener for range rebuilding and trigger cleanups
