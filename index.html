@@ -3064,8 +3064,20 @@
           return { x: x2, y: y1, z: z2 };
         }
 
+        let isAboutCanvasPaused = false;
+        window.pauseAboutCanvas = () => {
+          isAboutCanvasPaused = true;
+        };
+        window.resumeAboutCanvas = () => {
+          if (isAboutCanvasPaused) {
+            isAboutCanvasPaused = false;
+            drawFrame();
+          }
+        };
+
         // Animation loop
         function drawFrame() {
+          if (isAboutCanvasPaused) return;
           ctx.clearRect(0, 0, width, height);
 
           // Draw sparks
@@ -3208,6 +3220,16 @@
           globeInstance.width(container.offsetWidth).height(container.offsetHeight);
         }
         window.addEventListener("resize", resizeGlobe);
+
+        window.pauseGlobe = () => {
+          if (controls) controls.autoRotate = false;
+          container.style.display = 'none';
+        };
+        window.resumeGlobe = () => {
+          container.style.display = 'block';
+          if (controls) controls.autoRotate = true;
+          globeInstance.width(container.offsetWidth).height(container.offsetHeight);
+        };
       }
 
       function initGlobeMaskFollow() {
@@ -3275,6 +3297,37 @@
         initGlobe();
         initGlobeMaskFollow();
         initLightRays();
+
+        // ============ INTERSECTION OBSERVER FOR ACTIVE CANVAS LOOPS ============
+        // 1. About Canvas Observer
+        const aboutCanvas = document.getElementById('about-canvas');
+        if (aboutCanvas) {
+          const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+              if (entry.isIntersecting) {
+                if (typeof window.resumeAboutCanvas === 'function') window.resumeAboutCanvas();
+              } else {
+                if (typeof window.pauseAboutCanvas === 'function') window.pauseAboutCanvas();
+              }
+            });
+          }, { threshold: 0.02 });
+          observer.observe(aboutCanvas);
+        }
+
+        // 2. Globe Canvas Observer
+        const globeContainer = document.getElementById('globe-container');
+        if (globeContainer) {
+          const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+              if (entry.isIntersecting) {
+                if (typeof window.resumeGlobe === 'function') window.resumeGlobe();
+              } else {
+                if (typeof window.pauseGlobe === 'function') window.pauseGlobe();
+              }
+            });
+          }, { threshold: 0.02 });
+          observer.observe(globeContainer);
+        }
       });
 
       // ============ THEME SWITCHER CLICK HANDLER ============
