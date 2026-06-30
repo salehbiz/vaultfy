@@ -8634,7 +8634,7 @@ function Pl(s, t = {}) {
     o = t.windowBehind ?? 16,
     a = t.windowEvict ?? 64,
     l = (E) =>
-      `./${window.currentTheme === "night" ? (i === "assets/vault-frames-mobile" ? "assets/vault-frames-mobile-night" : "assets/vault-frames-night") : i}/frame_${Sc(E + 1)}.webp`,
+      `./${window.currentTheme === "night" ? (i === "assets/hero-frames-mobile" ? "assets/hero-frames-mobile-night" : "assets/hero-frames-night") : i}/frame_${Sc(E + 1)}.webp`,
     u = document.getElementById("hero-canvas");
   if (!u) throw new Error("#hero-canvas not found");
   const c = u.getContext("2d", { alpha: !1, desynchronized: !0 });
@@ -9166,11 +9166,11 @@ function Ol({ reduced: s, marqueeLoops: t }) {
       .to(a, { opacity: 1, y: 0, duration: 1.6 }, 2.2));
 }
 L.registerPlugin(I);
-const $c = 4,
+const $c = 20,
   Gc = 90,
   Kc = {
     frameCount: vc,
-    basePath: "assets/vault-frames",
+    basePath: "assets/hero-frames",
     stream: !0,
     windowAhead: 4,
     windowBehind: 2,
@@ -9178,7 +9178,7 @@ const $c = 4,
   },
   Qc = {
     frameCount: yc,
-    basePath: "assets/vault-frames-mobile",
+    basePath: "assets/hero-frames-mobile",
     stream: !0,
     dprCap: 2,
     windowAhead: 3,

@@ -32,8 +32,8 @@
 
 
     <!-- prime the first frames so the loader can paint before the module graph finishes -->
-    <link rel="preload" as="image" href="./assets/vault-frames/frame_0001.webp" type="image/webp" />
-    <link rel="preload" as="image" href="./assets/vault-frames/frame_0002.webp" type="image/webp" />
+    <link rel="preload" as="image" href="./assets/hero-frames/frame_0001.webp" type="image/webp" />
+    <link rel="preload" as="image" href="./assets/hero-frames/frame_0002.webp" type="image/webp" />
     <script type="module" crossorigin src="./assets/index--HMd8e_z.js"></script>
     <link rel="stylesheet" crossorigin href="./assets/index-432YlIig.css">
     <style>
@@ -2488,7 +2488,7 @@
         
         // Re-create the timeline
         const eyebrowLetters = Array.from(document.querySelectorAll("#zone-eyebrow .eyebrow span"));
-        window.Hc(window.activePlayer, { pinPxPerFrame: 4, eyebrowLetters: eyebrowLetters });
+        window.Hc(window.activePlayer, { pinPxPerFrame: 20, eyebrowLetters: eyebrowLetters });
 
         // Re-initialize services animation on the new timeline!
         if (typeof window.initServicesAnimation === 'function') {
