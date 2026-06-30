@@ -2668,9 +2668,17 @@
         const servicesSection = document.getElementById('our-services-section');
 
         const frameCount = 192;
-        const currentFrame = index => (
-          `./assets/vault-frames/frame_${String(index + 1).padStart(4, '0')}.webp`
-        );
+        const currentFrame = index => {
+          const isMobile = window.matchMedia("(max-width: 1023px)").matches;
+          const isNight = window.currentTheme === 'night';
+          let folder = "assets/vault-frames";
+          if (isMobile) {
+            folder = isNight ? "assets/vault-frames-mobile-night" : "assets/vault-frames-mobile";
+          } else {
+            folder = isNight ? "assets/vault-frames-night" : "assets/vault-frames";
+          }
+          return `./${folder}/frame_${String(index + 1).padStart(4, '0')}.webp`;
+        };
 
         const air = {
           frame: 0
@@ -2695,8 +2703,11 @@
           return img;
         }
 
+        let prefetchTimeoutId = null;
+
         // Sequential background pre-downloading to browser HTTP cache (keeps memory clear)
         function prefetchServices() {
+          if (prefetchTimeoutId) clearTimeout(prefetchTimeoutId);
           let i = 0;
           function next() {
             if (i >= frameCount) return;
@@ -2704,10 +2715,10 @@
             img.src = currentFrame(i);
             img.onload = img.onerror = () => {
               i++;
-              setTimeout(next, 15);
+              prefetchTimeoutId = setTimeout(next, 15);
             };
           }
-          setTimeout(next, 2500);
+          prefetchTimeoutId = setTimeout(next, 2500);
         }
         prefetchServices();
 
@@ -2763,6 +2774,12 @@
 
         // Global function to attach services animations to the current window.heroTimeline
         window.initServicesAnimation = function() {
+          // Clear service image cache to load new theme/responsive files
+          serviceImageCache.clear();
+
+          // Restart prefetching for the current theme frames
+          prefetchServices();
+
           // Reset animation frame
           air.frame = 0;
 
