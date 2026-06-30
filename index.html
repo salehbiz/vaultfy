@@ -36,7 +36,7 @@
     <link rel="preload" as="image" href="./frames/frame_0002.webp" type="image/webp" />
     <script type="module" crossorigin src="./assets/index--HMd8e_z.js"></script>
     <link rel="stylesheet" crossorigin href="./assets/index-432YlIig.css">
-    <script src="https://cdn.jsdelivr.net/npm/globe.gl"></script>
+    <script src="https://cdn.jsdelivr.net/npm/globe.gl" defer></script>
     <style>
       :root {
         /* Color Tokens */
@@ -275,10 +275,7 @@
         height: clamp(100px, 16vh, 200px);
         z-index: 5;
         pointer-events: none;
-        backdrop-filter: blur(24px);
-        -webkit-backdrop-filter: blur(24px);
-        mask-image: linear-gradient(to top, black 0%, rgba(0, 0, 0, 0.4) 60%, transparent 100%);
-        -webkit-mask-image: linear-gradient(to top, black 0%, rgba(0, 0, 0, 0.4) 60%, transparent 100%);
+        background: linear-gradient(to top, #0A0A0A 0%, rgba(10, 10, 10, 0.8) 40%, rgba(10, 10, 10, 0.3) 70%, transparent 100%);
       }
       .hero-bottom-blend {
         position: absolute;
@@ -492,10 +489,7 @@
         height: clamp(100px, 16vh, 200px);
         z-index: 5;
         pointer-events: none;
-        backdrop-filter: blur(24px);
-        -webkit-backdrop-filter: blur(24px);
-        mask-image: linear-gradient(to bottom, black 0%, rgba(0, 0, 0, 0.4) 60%, transparent 100%);
-        -webkit-mask-image: linear-gradient(to bottom, black 0%, rgba(0, 0, 0, 0.4) 60%, transparent 100%);
+        background: linear-gradient(to bottom, #0A0A0A 0%, rgba(10, 10, 10, 0.8) 40%, rgba(10, 10, 10, 0.3) 70%, transparent 100%);
       }
       .services-bottom-blend,
       .section-blend-bottom {
@@ -506,10 +500,7 @@
         height: clamp(100px, 16vh, 200px);
         z-index: 5;
         pointer-events: none;
-        backdrop-filter: blur(24px);
-        -webkit-backdrop-filter: blur(24px);
-        mask-image: linear-gradient(to top, black 0%, rgba(0, 0, 0, 0.4) 60%, transparent 100%);
-        -webkit-mask-image: linear-gradient(to top, black 0%, rgba(0, 0, 0, 0.4) 60%, transparent 100%);
+        background: linear-gradient(to top, #0A0A0A 0%, rgba(10, 10, 10, 0.8) 40%, rgba(10, 10, 10, 0.3) 70%, transparent 100%);
       }
 
       /* ============ LIGHT RAYS BACKGROUND EFFECT ============ */
@@ -581,10 +572,7 @@
         height: clamp(80px, 12vh, 160px);
         z-index: 5;
         pointer-events: none;
-        backdrop-filter: blur(24px);
-        -webkit-backdrop-filter: blur(24px);
-        mask-image: linear-gradient(to bottom, black 0%, rgba(0, 0, 0, 0.4) 60%, transparent 100%);
-        -webkit-mask-image: linear-gradient(to bottom, black 0%, rgba(0, 0, 0, 0.4) 60%, transparent 100%);
+        background: linear-gradient(to bottom, #0A0A0A 0%, rgba(10, 10, 10, 0.8) 40%, rgba(10, 10, 10, 0.3) 70%, transparent 100%);
       }
       .section-blur-transition-bottom {
         position: absolute;
@@ -594,10 +582,7 @@
         height: clamp(80px, 12vh, 160px);
         z-index: 5;
         pointer-events: none;
-        backdrop-filter: blur(24px);
-        -webkit-backdrop-filter: blur(24px);
-        mask-image: linear-gradient(to top, black 0%, rgba(0, 0, 0, 0.4) 60%, transparent 100%);
-        -webkit-mask-image: linear-gradient(to top, black 0%, rgba(0, 0, 0, 0.4) 60%, transparent 100%);
+        background: linear-gradient(to top, #0A0A0A 0%, rgba(10, 10, 10, 0.8) 40%, rgba(10, 10, 10, 0.3) 70%, transparent 100%);
       }
 
       .services-container {
@@ -1955,7 +1940,7 @@
         ></canvas>
         <video
           id="hero-video-night"
-          preload="auto"
+          preload="none"
           poster="./assets/night_poster.webp"
           loop
           muted
@@ -2170,10 +2155,10 @@
                     <p class="launching-soon-eyebrow" data-tag-anim>Download free</p>
                     <div class="store-badges-row" style="justify-content: flex-start;">
                       <a href="https://apps.apple.com/us/app/vaultfy/id6764771451" target="_blank" rel="noopener noreferrer" class="store-badge-link" data-magnetic-soft>
-                        <img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83" alt="Download on the App Store" class="store-badge-img apple-badge">
+                        <img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83" alt="Download on the App Store" class="store-badge-img apple-badge" loading="lazy">
                       </a>
                       <a href="https://play.google.com/store/apps/details?id=com.vaultfy.app.prod&pcampaignid=web_share" target="_blank" rel="noopener noreferrer" class="store-badge-link" data-magnetic-soft>
-                        <img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play" class="store-badge-img play-badge">
+                        <img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play" class="store-badge-img play-badge" loading="lazy">
                       </a>
                     </div>
                   </div>
@@ -2182,9 +2167,9 @@
                 <!-- Right Side: Screenshots area -->
                 <div class="showcase-right-col">
                   <div class="showcase-screens-container">
-                    <img src="./assets/iphone-screen-1.png" alt="Vaultfy Concierge Search Screen" class="showcase-screen screen-1">
-                    <img src="./assets/iphone-screen-2.png" alt="Alfred Intelligent Assistant Chat Screen" class="showcase-screen screen-2">
-                    <img src="./assets/iphone-screen-3.png" alt="Vaultfy Experiences Dashboard Screen" class="showcase-screen screen-3">
+                    <img src="./assets/iphone-screen-1.webp" alt="Vaultfy Concierge Search Screen" class="showcase-screen screen-1" loading="lazy">
+                    <img src="./assets/iphone-screen-2.webp" alt="Alfred Intelligent Assistant Chat Screen" class="showcase-screen screen-2" loading="lazy">
+                    <img src="./assets/iphone-screen-3.webp" alt="Vaultfy Experiences Dashboard Screen" class="showcase-screen screen-3" loading="lazy">
                   </div>
                 </div>
 
@@ -2316,10 +2301,10 @@
             <div class="launching-soon-wrap" style="margin-top: 2.5rem;">
               <div class="store-badges-row">
                 <a href="https://apps.apple.com/us/app/vaultfy/id6764771451" target="_blank" rel="noopener noreferrer" class="store-badge-link" data-magnetic-soft>
-                  <img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83" alt="Download on the App Store" class="store-badge-img apple-badge">
+                  <img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83" alt="Download on the App Store" class="store-badge-img apple-badge" loading="lazy">
                 </a>
                 <a href="https://play.google.com/store/apps/details?id=com.vaultfy.app.prod&pcampaignid=web_share" target="_blank" rel="noopener noreferrer" class="store-badge-link" data-magnetic-soft>
-                  <img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play" class="store-badge-img play-badge">
+                  <img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play" class="store-badge-img play-badge" loading="lazy">
                 </a>
               </div>
             </div>
@@ -2369,10 +2354,10 @@
                   <span style="font-family: 'Inter', sans-serif; font-size: var(--text-xs); font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--color-label);">Download</span>
                   <div class="footer-store-badges" style="display: flex; gap: 0.75rem; align-items: center;">
                     <a href="https://apps.apple.com/us/app/vaultfy/id6764771451" target="_blank" rel="noopener noreferrer" class="store-badge-link" data-magnetic-soft style="display: block; width: 110px;">
-                      <img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83" alt="Download on the App Store" style="width: 100%; height: auto; display: block; border-radius: 4px;">
+                      <img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83" alt="Download on the App Store" style="width: 100%; height: auto; display: block; border-radius: 4px;" loading="lazy">
                     </a>
                     <a href="https://play.google.com/store/apps/details?id=com.vaultfy.app.prod&pcampaignid=web_share" target="_blank" rel="noopener noreferrer" class="store-badge-link" data-magnetic-soft style="display: block; width: 125px;">
-                      <img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play" style="width: 100%; height: auto; display: block;">
+                      <img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play" style="width: 100%; height: auto; display: block;" loading="lazy">
                     </a>
                   </div>
                 </div>
@@ -3202,9 +3187,11 @@
       });
 
       // ============ GLOBAL SECTION INTERACTIVE 3D GLOBE ============
+      let globeInitialized = false;
       function initGlobe() {
         const container = document.querySelector("[globe-container]");
-        if (!container || typeof Globe === "undefined") return;
+        if (!container || typeof Globe === "undefined" || globeInitialized) return;
+        globeInitialized = true;
 
         // Generate flight path arcs using a glowing gold/amber gradient
         const arcs = [...Array(12).keys()].map(() => ({
@@ -3342,7 +3329,6 @@
       }
 
       document.addEventListener('DOMContentLoaded', () => {
-        initGlobe();
         initGlobeMaskFollow();
         initLightRays();
 
@@ -3368,6 +3354,9 @@
           const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
               if (entry.isIntersecting) {
+                if (!globeInitialized) {
+                  initGlobe();
+                }
                 if (typeof window.resumeGlobe === 'function') window.resumeGlobe();
               } else {
                 if (typeof window.pauseGlobe === 'function') window.pauseGlobe();
