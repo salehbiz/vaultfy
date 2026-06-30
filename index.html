@@ -2412,21 +2412,22 @@
       let newBc, newDs;
       if (isNight) {
         const ranges = isMobile ? window.nightRangesMobile : window.nightRangesDesktop;
+        const denom = isMobile ? 960 : 971;
         newBc = [
-          { sel: "#chapter-residences", in: (ranges.residences.start - 1) / totalFrames, out: (ranges.residences.end - 1) / totalFrames },
-          { sel: "#chapter-horology", in: (ranges.horology.start - 1) / totalFrames, out: (ranges.horology.end - 1) / totalFrames },
-          { sel: "#chapter-events", in: (ranges.events.start - 1) / totalFrames, out: (ranges.events.end - 1) / totalFrames },
-          { sel: "#chapter-automotive", in: (ranges.automotive.start - 1) / totalFrames, out: (ranges.automotive.end - 1) / totalFrames },
-          { sel: "#chapter-yachts", in: (ranges.yachts.start - 1) / totalFrames, out: (ranges.yachts.end - 1) / totalFrames },
-          { sel: "#chapter-aviation", in: (ranges.aviation.start - 1) / totalFrames, out: 0.95 }
+          { sel: "#chapter-residences", in: (ranges.residences.start - 1) / denom, out: (ranges.residences.end - 1) / denom },
+          { sel: "#chapter-horology", in: (ranges.horology.start - 1) / denom, out: (ranges.horology.end - 1) / denom },
+          { sel: "#chapter-events", in: (ranges.events.start - 1) / denom, out: (ranges.events.end - 1) / denom },
+          { sel: "#chapter-automotive", in: (ranges.automotive.start - 1) / denom, out: (ranges.automotive.end - 1) / denom },
+          { sel: "#chapter-yachts", in: (ranges.yachts.start - 1) / denom, out: (ranges.yachts.end - 1) / denom },
+          { sel: "#chapter-aviation", in: (ranges.aviation.start - 1) / denom, out: 0.95 }
         ];
         newDs = [
-          { until: (ranges.residences.start - 1) / totalFrames, label: "I · Sky" },
-          { until: (ranges.residences.end - 1) / totalFrames, label: "II · Residences" },
-          { until: (ranges.horology.end - 1) / totalFrames, label: "III · Horology" },
-          { until: (ranges.events.end - 1) / totalFrames, label: "IV · Private Events" },
-          { until: (ranges.automotive.end - 1) / totalFrames, label: "V · Automotive" },
-          { until: (ranges.yachts.end - 1) / totalFrames, label: "VI · Yachts" },
+          { until: (ranges.residences.start - 1) / denom, label: "I · Sky" },
+          { until: (ranges.residences.end - 1) / denom, label: "II · Residences" },
+          { until: (ranges.horology.end - 1) / denom, label: "III · Horology" },
+          { until: (ranges.events.end - 1) / denom, label: "IV · Private Events" },
+          { until: (ranges.automotive.end - 1) / denom, label: "V · Automotive" },
+          { until: (ranges.yachts.end - 1) / denom, label: "VI · Yachts" },
           { until: 1/0, label: "VII · Aviation" }
         ];
       } else {
@@ -2501,9 +2502,7 @@
       const checkInit = setInterval(() => {
         if (window.heroTimeline && window.Bc && window.ds && window.Hc) {
           clearInterval(checkInit);
-          if (window.currentTheme === 'night') {
-            window.updateHeroRanges();
-          }
+          window.updateHeroRanges();
         }
       }, 100);
     });
