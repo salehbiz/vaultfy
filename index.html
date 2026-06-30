@@ -32,11 +32,10 @@
 
 
     <!-- prime the first frames so the loader can paint before the module graph finishes -->
-    <link rel="preload" as="image" href="./frames/frame_0001.webp" type="image/webp" />
-    <link rel="preload" as="image" href="./frames/frame_0002.webp" type="image/webp" />
+    <link rel="preload" as="image" href="./assets/vault-frames/frame_0001.webp" type="image/webp" />
+    <link rel="preload" as="image" href="./assets/vault-frames/frame_0002.webp" type="image/webp" />
     <script type="module" crossorigin src="./assets/index--HMd8e_z.js"></script>
     <link rel="stylesheet" crossorigin href="./assets/index-432YlIig.css">
-    <script src="https://cdn.jsdelivr.net/npm/globe.gl" defer></script>
     <style>
       :root {
         /* Color Tokens */
@@ -232,6 +231,11 @@
         pointer-events: none;
         opacity: 0;
         transition: opacity 0.8s ease;
+      }
+      @media (max-width: 1023px) {
+        .site-particles {
+          display: none !important;
+        }
       }
       .site-particles canvas {
         display: block;
@@ -1124,9 +1128,7 @@
         position: relative;
         max-width: 100%;
         margin: 0 auto;
-        background: linear-gradient(135deg, rgba(0,0,0,0.4) 0%, rgba(10,10,26,0.3) 50%, rgba(0,0,0,0.4) 100%);
-        backdrop-filter: blur(24px);
-        -webkit-backdrop-filter: blur(24px);
+        background: rgba(10, 10, 26, 0.92);
         border: 1px solid var(--color-border);
         border-radius: 1.5rem;
         overflow: hidden;
@@ -1258,11 +1260,10 @@
       }
 
       .alfred-row .bubble-wrap {
-        background: linear-gradient(135deg, rgba(10,10,26,0.9), rgba(0,0,0,0.9));
+        background: rgba(10, 10, 26, 0.95);
         color: var(--color-alfred-silver);
         border-radius: 1.5rem 1.5rem 1.5rem 0.25rem;
         padding: 1.25rem 1.75rem;
-        backdrop-filter: blur(16px);
         border: 1px solid color-mix(in srgb, var(--color-alfred-gold) 15%, transparent);
         box-shadow: 0 10px 15px -3px rgba(0,0,0,0.5);
       }
@@ -2486,7 +2487,7 @@
         
         // Re-create the timeline
         const eyebrowLetters = Array.from(document.querySelectorAll("#zone-eyebrow .eyebrow span"));
-        window.Hc(window.activePlayer, { pinPxPerFrame: 6, eyebrowLetters: eyebrowLetters });
+        window.Hc(window.activePlayer, { pinPxPerFrame: 4, eyebrowLetters: eyebrowLetters });
 
         // Re-initialize services animation on the new timeline!
         if (typeof window.initServicesAnimation === 'function') {
@@ -3348,16 +3349,26 @@
           observer.observe(aboutCanvas);
         }
 
-        // 2. Globe Canvas Observer
+        // 2. Globe Canvas Observer — lazy-loads globe.gl script on first intersection
         const globeContainer = document.getElementById('globe-container');
         if (globeContainer) {
+          let globeScriptLoaded = false;
           const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
               if (entry.isIntersecting) {
-                if (!globeInitialized) {
-                  initGlobe();
+                if (!globeScriptLoaded) {
+                  globeScriptLoaded = true;
+                  const script = document.createElement('script');
+                  script.src = 'https://cdn.jsdelivr.net/npm/globe.gl';
+                  script.onload = () => {
+                    if (!globeInitialized) initGlobe();
+                    if (typeof window.resumeGlobe === 'function') window.resumeGlobe();
+                  };
+                  document.head.appendChild(script);
+                } else {
+                  if (!globeInitialized) initGlobe();
+                  if (typeof window.resumeGlobe === 'function') window.resumeGlobe();
                 }
-                if (typeof window.resumeGlobe === 'function') window.resumeGlobe();
               } else {
                 if (typeof window.pauseGlobe === 'function') window.pauseGlobe();
               }
@@ -3917,7 +3928,20 @@
               );
             }
           });
-          requestAnimationFrame(() => this.animate());
+          if (!this._paused) {
+            requestAnimationFrame(() => this.animate());
+          }
+        }
+
+        pause() {
+          this._paused = true;
+        }
+
+        resume() {
+          if (this._paused) {
+            this._paused = false;
+            requestAnimationFrame(() => this.animate());
+          }
         }
 
         updateColor(newColor) {
@@ -4099,9 +4123,11 @@
 
       }
 
-      // Initialize Particles when DOM is ready
+      // Initialize Particles when DOM is ready (only on desktop for performance)
       document.addEventListener('DOMContentLoaded', () => {
-        window.particlesBg = new ParticlesBackground('particles-canvas', 'site-particles');
+        if (window.matchMedia('(min-width: 1024px)').matches) {
+          window.particlesBg = new ParticlesBackground('particles-canvas', 'site-particles');
+        }
         
         // Initial color setup
         if (window.particlesBg) {
@@ -4119,9 +4145,17 @@
               start: 'top bottom',
               onEnter: () => {
                 gsap.to('#site-particles', { opacity: 1, duration: 1.0, ease: 'power2.out' });
+                if (window.particlesBg && typeof window.particlesBg.resume === 'function') window.particlesBg.resume();
               },
               onLeaveBack: () => {
                 gsap.to('#site-particles', { opacity: 0, duration: 0.8, ease: 'power2.out' });
+                if (window.particlesBg && typeof window.particlesBg.pause === 'function') window.particlesBg.pause();
+              },
+              onLeave: () => {
+                if (window.particlesBg && typeof window.particlesBg.pause === 'function') window.particlesBg.pause();
+              },
+              onEnterBack: () => {
+                if (window.particlesBg && typeof window.particlesBg.resume === 'function') window.particlesBg.resume();
               }
             });
             initTextAnimations();

@@ -7584,8 +7584,8 @@ I.core = {
   },
 };
 cl() && z.registerPlugin(I);
-const vc = 800,
-  yc = 480,
+const vc = 192,
+  yc = 192,
   wc = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
   xc = () => window.matchMedia("(min-width: 1024px)").matches,
   bc = () => window.matchMedia("(pointer: fine)").matches,
@@ -8634,7 +8634,7 @@ function Pl(s, t = {}) {
     o = t.windowBehind ?? 16,
     a = t.windowEvict ?? 64,
     l = (E) =>
-      `./${window.currentTheme === "night" ? (i === "frames-mobile" ? "frames-mobile-night" : "frames-night") : i}/frame_${Sc(E + 1)}.webp`,
+      `./${window.currentTheme === "night" ? (i === "assets/vault-frames-mobile" ? "assets/vault-frames-mobile-night" : "assets/vault-frames-night") : i}/frame_${Sc(E + 1)}.webp`,
     u = document.getElementById("hero-canvas");
   if (!u) throw new Error("#hero-canvas not found");
   const c = u.getContext("2d", { alpha: !1, desynchronized: !0 });
@@ -9166,24 +9166,24 @@ function Ol({ reduced: s, marqueeLoops: t }) {
       .to(a, { opacity: 1, y: 0, duration: 1.6 }, 2.2));
 }
 L.registerPlugin(I);
-const $c = 6,
+const $c = 4,
   Gc = 90,
   Kc = {
     frameCount: vc,
-    basePath: "frames",
+    basePath: "assets/vault-frames",
     stream: !0,
-    windowAhead: 8,
-    windowBehind: 4,
-    windowEvict: 12,
+    windowAhead: 4,
+    windowBehind: 2,
+    windowEvict: 8,
   },
   Qc = {
     frameCount: yc,
-    basePath: "frames-mobile",
+    basePath: "assets/vault-frames-mobile",
     stream: !0,
-    dprCap: 3,
-    windowAhead: 6,
-    windowBehind: 3,
-    windowEvict: 10,
+    dprCap: 2,
+    windowAhead: 3,
+    windowBehind: 1,
+    windowEvict: 6,
   },
   ps = document.getElementById("loader"),
   ta = document.getElementById("loader-fill"),
