@@ -8,51 +8,53 @@
   :root { color-scheme: dark; }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html, body { background: #05070d; color: #f4efe6; font-family: -apple-system, system-ui, sans-serif; }
-  /* Tall scroll track; the hero sticks while you scroll through it */
   #track { height: 600vh; position: relative; }
-  #stage {
-    position: sticky; top: 0; height: 100vh; width: 100%;
-    overflow: hidden; background: #05070d;
-  }
+  #stage { position: sticky; top: 0; height: 100vh; width: 100%; overflow: hidden; background: #05070d; }
   #hero-video {
     position: absolute; inset: 0; width: 100%; height: 100%;
-    object-fit: cover; z-index: 0; pointer-events: none;
-    background: #05070d;
+    object-fit: cover; z-index: 0; pointer-events: none; background: #05070d;
   }
   .grain { position:absolute; inset:0; z-index:1; pointer-events:none;
     background: radial-gradient(120% 80% at 50% 10%, rgba(0,0,0,0) 40%, rgba(0,0,0,.35) 100%); }
-  .caption {
-    position: absolute; left: 0; right: 0; bottom: 12%; z-index: 2; text-align: center;
+  .caption { position: absolute; left: 0; right: 0; bottom: 12%; z-index: 2; text-align: center;
     font-size: clamp(28px, 6vw, 64px); font-weight: 300; letter-spacing: .02em;
-    text-shadow: 0 2px 30px rgba(0,0,0,.6);
-  }
+    text-shadow: 0 2px 30px rgba(0,0,0,.6); }
   .eyebrow { position:absolute; top:6%; left:0; right:0; text-align:center; z-index:2;
     font-size: 12px; letter-spacing:.4em; text-transform:uppercase; opacity:.7; }
-  /* diagnostics */
-  #hud {
-    position: fixed; top: 8px; left: 8px; z-index: 9; font: 11px/1.4 ui-monospace, monospace;
-    background: rgba(0,0,0,.55); padding: 8px 10px; border-radius: 8px; white-space: pre;
-    backdrop-filter: blur(6px);
-  }
+  #hud { position: fixed; top: 8px; left: 8px; z-index: 9; font: 11px/1.4 ui-monospace, monospace;
+    background: rgba(0,0,0,.55); padding: 8px 10px; border-radius: 8px; white-space: pre; backdrop-filter: blur(6px); }
   #after { height: 120vh; display:flex; align-items:center; justify-content:center;
-    background: linear-gradient(#05070d, #0b1020); font-size: 24px; font-weight: 300; opacity:.8; }
-  #loading { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
-    z-index: 20; background: #05070d; font-size: 13px; letter-spacing: .3em; text-transform: uppercase; }
+    background: linear-gradient(#05070d, #0b1020); font-size: 24px; font-weight: 300; opacity:.8; text-align:center; padding:0 24px;}
+  /* Start / status overlay */
+  #veil { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    z-index: 20; background: #05070d; gap: 18px; text-align: center; padding: 24px; }
+  #veil h1 { font-weight: 300; font-size: clamp(20px, 5vw, 32px); letter-spacing: .04em; }
+  #veil p { opacity: .6; font-size: 13px; max-width: 460px; line-height: 1.6; }
+  #startBtn { margin-top: 6px; padding: 16px 34px; border: 1px solid rgba(244,239,230,.4); border-radius: 999px;
+    background: transparent; color: #f4efe6; font-size: 14px; letter-spacing: .2em; text-transform: uppercase; cursor: pointer; }
+  #startBtn:active { background: rgba(244,239,230,.12); }
+  #status { font-size: 12px; opacity: .5; min-height: 16px; }
 </style>
 </head>
 <body>
-  <div id="loading">Loading hero…</div>
   <div id="hud">init…</div>
 
   <div id="track">
     <div id="stage">
-      <video id="hero-video" muted playsinline preload="auto" disablepictureinpicture></video>
+      <video id="hero-video" muted playsinline webkit-playsinline preload="auto" disablepictureinpicture></video>
       <div class="grain"></div>
       <div class="eyebrow">Video-scrub spike · scroll to test</div>
       <div class="caption" id="caption">Sky</div>
     </div>
   </div>
   <div id="after">If this scrolled buttery-smooth on your phone, video-scrub is the answer.</div>
+
+  <div id="veil">
+    <h1>Vaultfy · video-scrub test</h1>
+    <p>Tap to load the hero, then scroll — slowly first, then flick fast. Watch the HUD (top-left) for videoFPS. This primes the video for seeking (required on iOS).</p>
+    <button id="startBtn">Tap to start</button>
+    <div id="status"></div>
+  </div>
 
 <script>
 (() => {
@@ -62,79 +64,88 @@
   const video = document.getElementById('hero-video');
   const hud = document.getElementById('hud');
   const caption = document.getElementById('caption');
-  const loading = document.getElementById('loading');
+  const veil = document.getElementById('veil');
+  const startBtn = document.getElementById('startBtn');
+  const statusEl = document.getElementById('status');
   const track = document.getElementById('track');
 
-  video.src = src;
-
-  // Chapter captions keyed by scroll progress (0..1)
   const chapters = [
-    [0.00, 'Sky'], [0.12, 'Residences'], [0.30, 'Horology'],
-    [0.48, 'Private Events'], [0.66, 'Automotive'], [0.80, 'Yachts'], [0.90, 'Aviation'],
+    [0.00,'Sky'],[0.12,'Residences'],[0.30,'Horology'],
+    [0.48,'Private Events'],[0.66,'Automotive'],[0.80,'Yachts'],[0.90,'Aviation'],
   ];
-  const chapterFor = (p) => { let l = chapters[0][1]; for (const [u, n] of chapters) { if (p >= u) l = n; } return l; };
+  const chapterFor = (p) => { let l = chapters[0][1]; for (const [u,n] of chapters) if (p>=u) l=n; return l; };
 
-  let duration = 0;
-  let targetT = 0;     // where scroll says the video should be
-  let currentT = 0;    // smoothed playhead (lerp -> feels like scrub smoothing)
-  let ready = false;
-  let lastPaint = performance.now();
-  let fps = 0, seeks = 0, painted = 0;
+  let duration = 0, targetT = 0, currentT = 0, ready = false;
+  let lastPaint = performance.now(), fps = 0, seeks = 0, painted = 0;
 
-  // FPS from actual painted video frames (the real smoothness signal)
   const onFrame = () => {
-    const now = performance.now();
-    const dt = now - lastPaint; lastPaint = now;
-    fps = dt > 0 ? Math.round(1000 / dt) : fps;
-    painted++;
+    const now = performance.now(); const dt = now - lastPaint; lastPaint = now;
+    fps = dt>0 ? Math.round(1000/dt) : fps; painted++;
     if ('requestVideoFrameCallback' in video) video.requestVideoFrameCallback(onFrame);
   };
 
   function progress() {
     const max = track.scrollHeight - window.innerHeight;
-    return max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+    return max>0 ? Math.min(1, Math.max(0, window.scrollY/max)) : 0;
   }
 
   function tick() {
     if (ready) {
       const p = progress();
       targetT = p * duration;
-      // Smooth toward the target so fast flicks don't thrash the seeker.
       currentT += (targetT - currentT) * 0.18;
       if (Math.abs(targetT - currentT) < 0.004) currentT = targetT;
-      // Only seek when it actually moved a meaningful amount.
-      if (Math.abs(video.currentTime - currentT) > 0.008) {
-        video.currentTime = currentT; seeks++;
-      }
+      if (Math.abs(video.currentTime - currentT) > 0.008) { try { video.currentTime = currentT; seeks++; } catch(e){} }
       caption.textContent = chapterFor(p);
       hud.textContent =
-        `src: ${isMobile ? 'mobile' : 'desktop'} ${video.videoWidth}x${video.videoHeight}\n` +
-        `progress: ${(p*100).toFixed(1)}%\n` +
-        `videoFPS: ${fps}  seeks:${seeks} painted:${painted}\n` +
-        `t: ${currentT.toFixed(2)} / ${duration.toFixed(2)}s`;
+        `src:${isMobile?'mobile':'desktop'} ${video.videoWidth||'?'}x${video.videoHeight||'?'} rs:${video.readyState}\n` +
+        `progress:${(p*100).toFixed(1)}%  videoFPS:${fps}\n` +
+        `seeks:${seeks} painted:${painted}\n` +
+        `t:${currentT.toFixed(2)}/${(duration||0).toFixed(2)}s`;
+    } else {
+      hud.textContent = `loading… rs:${video.readyState} buffered:${video.buffered.length?video.buffered.end(0).toFixed(1):0}s err:${video.error?video.error.code:'-'}`;
     }
     requestAnimationFrame(tick);
   }
+  requestAnimationFrame(tick);
 
-  video.addEventListener('loadedmetadata', () => {
-    duration = video.duration || 6.4;
-  });
-  // Wait until enough is buffered to seek smoothly from the start.
-  video.addEventListener('canplaythrough', start, { once: true });
-  video.addEventListener('loadeddata', () => { setTimeout(start, 400); }, { once: true });
+  video.addEventListener('loadedmetadata', () => { duration = video.duration || 6.4; });
+  video.addEventListener('error', () => { statusEl.textContent = 'video error code ' + (video.error && video.error.code); });
 
-  function start() {
+  function becomeReady() {
     if (ready) return;
-    ready = true;
     duration = video.duration || 6.4;
-    video.currentTime = 0;
-    loading.style.display = 'none';
+    if (!duration || !isFinite(duration)) { statusEl.textContent = 'no duration yet — retrying…'; return; }
+    ready = true;
+    try { video.currentTime = 0; } catch(e){}
+    veil.style.display = 'none';
     if ('requestVideoFrameCallback' in video) video.requestVideoFrameCallback(onFrame);
-    else hud.textContent += '\n(no requestVideoFrameCallback)';
   }
 
+  // Priming: a muted play() forces iOS to load + make the video seekable, then pause.
+  async function prime() {
+    statusEl.textContent = 'loading video…';
+    video.src = src;
+    video.load();
+    try {
+      await video.play();          // muted inline autoplay is allowed after a tap
+      // let it show it can decode, then freeze for scrubbing
+      await new Promise(r => setTimeout(r, 250));
+      video.pause();
+    } catch (e) {
+      statusEl.textContent = 'autoplay blocked (' + e.name + ') — tap again';
+    }
+    // Wait until we have data + duration, with a hard timeout so we never hang.
+    let waited = 0;
+    (function poll(){
+      if (video.readyState >= 2 && duration) return becomeReady();
+      if ((waited += 100) > 9000) { statusEl.textContent = 'timeout (rs=' + video.readyState + ') — tapping Start again may help'; return becomeReady(); }
+      setTimeout(poll, 100);
+    })();
+  }
+
+  startBtn.addEventListener('click', prime, { passive: true });
   window.addEventListener('scroll', () => {}, { passive: true });
-  requestAnimationFrame(tick);
 })();
 </script>
 </body>
